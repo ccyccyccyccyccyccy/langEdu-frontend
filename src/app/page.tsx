@@ -109,6 +109,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import FileUpload from "./components/FileUpload";
 import {SecretInput} from "./components/SecretInput";
+import { RadioGroupComponent } from "./components/RadioGroup";
 
 function App() {
   const [text, setText] = useState("");
@@ -116,13 +117,19 @@ function App() {
   const [openAI_API_Key, setOpenAI_API_Key] = useState("");
   const [langSearchAPI_Key, setLangSearchAPI_Key] = useState("");
   const [lectureFile, setLectureFile] = useState<File | null>(null);
+  const [radioValue, setRadioValue] = useState<string>("oneDocument");
+  const [ppFile1, setPPFile1] = useState<File | null>(null);
+  const [ppFile2, setPPFile2] = useState<File | null>(null);
+
 const handleOpenAI_API_Key_Change = (value: string) => {
     setOpenAI_API_Key(value);
   };
   const handleLangSearchAPI_Key_Change = (value: string) => {
     setLangSearchAPI_Key(value);
   };
-
+const handleRadioChange = (value: string) => {
+    setRadioValue(value);
+  }
   
   const baseUrl="http://127.0.0.1:5000"
 
@@ -132,13 +139,37 @@ const handleOpenAI_API_Key_Change = (value: string) => {
       .catch(error => console.error("Error fetching data:", error));
   }, []);
 
-  async function handleDownload() {
-    console.log("Download button clicked");
-    const response = await fetch(baseUrl + "/download/hello.pdf", {
-      method: "GET",
+  async function handleGetResults() {
+    if (!openAI_API_Key || !langSearchAPI_Key) {
+      alert("Please enter both API keys.");
+      return;
+    }
+    if (!lectureFile) {
+      alert("Please upload the lecture file.");
+      return;
+    }
+    if (radioValue === "oneDocument" && !ppFile1) {
+      alert("Please upload the pastpaper file.");
+      return;
+    }
+    if (radioValue === "twoDocument" && (!ppFile1 || !ppFile2)) {
+      alert("Please upload both pastpaper files.");
+      return;
+    }
+    console.log("Get results button clicked");
+    const response = await fetch(baseUrl + "/get_results", {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
+      body: JSON.stringify({
+        "openAI_API_Key": openAI_API_Key,
+        "langSearchAPI_Key": langSearchAPI_Key,
+        "numDocuments": radioValue === "oneDocument" ? 1 : 2,
+        "lectureFileName": lectureFile ? lectureFile.name : null,
+        "ppFile1Name": ppFile1 ? ppFile1.name : null,
+        "ppFile2Name": ppFile2 ? ppFile2.name : null
+      })
     })
     if (!response.ok) {
       throw new Error("Network response was not ok");
@@ -148,7 +179,7 @@ const handleOpenAI_API_Key_Change = (value: string) => {
     
     const a = document.createElement("a");
     a.href = url;
-    a.download = "hello.pdf"; // Specify the filename
+    a.download = "hello.html"; // Specify the filename
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -173,9 +204,22 @@ const handleOpenAI_API_Key_Change = (value: string) => {
         <FileUpload onUpload={setLectureFile} />
         </div>
         <div className="mt-4">
-        <button onClick={() => handleDownload()}
+          <RadioGroupComponent onChange={handleRadioChange} />
+        </div>
+        <div className="mt-4">
+        {radioValue === "oneDocument" ? (
+          <FileUpload onUpload={setPPFile1} />
+        ) : (
+          <>
+            <FileUpload onUpload={setPPFile1} />
+            <FileUpload onUpload={setPPFile2} />
+          </>
+        )}
+      </div>
+      <div className="mt-4">
+        <button onClick={() => handleGetResults()}
         className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition"
-        >Download</button>
+        >Get results</button>
         </div>
     </div>
   );
