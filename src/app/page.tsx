@@ -189,24 +189,36 @@ const handleRadioChange = (value: string) => {
 
   }
 
-  return (
-    <div className="flex flex-col items-center space-y-4 p-6">
-      <div>
-      <h1>Flask + Next.js Integration</h1>
-      <p>{data}</p>
+return (
+  <div className="flex flex-col items-center space-y-6 p-8 max-w-2xl mx-auto bg-white rounded-lg shadow-md">
+    <div className="text-center space-y-2">
+      <h1 className="text-3xl font-semibold tracking-tight text-[rgb(0,51,102)]">
+        Assessment question generator
+      </h1>
+      <p className="text-muted-foreground">{data}</p>
     </div>
-      <h1 className="text-2xl font-bold">Enter your api key</h1>
-      <SecretInput onChange={handleOpenAI_API_Key_Change} />
-      <h1 className="text-2xl font-bold">Enter your langsearch api key</h1>
-      <SecretInput onChange={handleLangSearchAPI_Key_Change} />
- 
-      <div className="mt-4">
+
+    <div className="w-full space-y-4">
+      <div>
+        <h2 className="text-xl font-medium text-[rgba(0, 0, 0, 1)] space-y-2">Enter your OpenAI API key</h2>
+        <SecretInput onChange={handleOpenAI_API_Key_Change} />
+      </div>
+
+      <div>
+        <h2 className="text-xl font-medium text-[rgba(0, 0, 0, 1)]">Enter your LangSearch API key</h2>
+        <SecretInput onChange={handleLangSearchAPI_Key_Change} />
+      </div>
+
+      <div className="space-y-2">
+        <h2 className="text-xl font-medium text-[rgba(0, 0, 0, 1)] space">Upload your lecture notes file</h2>
         <FileUpload onUpload={setLectureFile} />
-        </div>
-        <div className="mt-4">
-          <RadioGroupComponent onChange={handleRadioChange} />
-        </div>
-        <div className="mt-4">
+      </div>
+
+      <div className="space-y-2">
+        <h2 className="text-xl font-medium text-[rgba(0, 0, 0, 1)]">Upload your pastpaper file(s)</h2>
+         <div className="space-y-1">
+         <RadioGroupComponent onChange={handleRadioChange} />
+        
         {radioValue === "oneDocument" ? (
           <FileUpload onUpload={setPPFile1} />
         ) : (
@@ -215,14 +227,20 @@ const handleRadioChange = (value: string) => {
             <FileUpload onUpload={setPPFile2} />
           </>
         )}
-      </div>
-      <div className="mt-4">
-        <button onClick={() => handleGetResults()}
-        className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition"
-        >Get results</button>
         </div>
-    </div>
-  );
-}
+      </div>
 
+      <div className="pt-4">
+        <button
+          onClick={() => handleGetResults()}
+          className="w-full px-4 py-2 bg-[rgb(0,51,102)] text-white rounded-md hover:bg-[rgb(0,41,82)] transition-colors"
+        >
+          Get results
+        </button>
+      </div>
+    </div>
+  </div>
+);
+
+}
 export default App;

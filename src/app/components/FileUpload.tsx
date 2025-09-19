@@ -3,18 +3,28 @@ import { useState } from "react";
 
 export default function FileUpload({ onUpload }: { onUpload: (file: File) => void }) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-
+  const [fileName, setFileName] = useState("");
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setSelectedFile(file);
+      setFileName(file.name);
     }
   };
 
   
   return (
     <div>
-      <input type="file" onChange={handleFileChange} />
+      <input type="file" onChange={handleFileChange} 
+      className="block w-full text-sm text-white
+               file:mr-4 file:py-2 file:px-4
+               file:rounded-md file:border-0
+               file:text-sm file:font-semibold
+               file:bg-[rgb(0,51,102)] file:text-white
+               hover:file:bg-[rgb(0,41,82)]
+               transition"
+/>
+      {fileName && <p className="mt-2 text-sm text-gray-500">{fileName}</p>}
     </div>
   );
 }

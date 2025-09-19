@@ -6,10 +6,10 @@ export const SecretInput = ({ onChange }: { onChange?: (value: string) => void }
   const [showSecret, setShowSecret] = useState(false);
 
   return (
-    <div className="flex items-center border rounded px-2 py-1">
+    <div className="flex items-center border rounded px-2 py-1 ">
       <input
         type={showSecret ? "text" : "password"}
-        placeholder="Enter password"
+        placeholder="Enter your API key"
         className="flex-grow outline-none"
       />
       <button
