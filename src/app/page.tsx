@@ -115,6 +115,7 @@ function App() {
   const [data, setData] = useState("");
   const [openAI_API_Key, setOpenAI_API_Key] = useState("");
   const [langSearchAPI_Key, setLangSearchAPI_Key] = useState("");
+  const [lectureFile, setLectureFile] = useState<File | null>(null);
 const handleOpenAI_API_Key_Change = (value: string) => {
     setOpenAI_API_Key(value);
   };
@@ -169,7 +170,7 @@ const handleOpenAI_API_Key_Change = (value: string) => {
       <SecretInput onChange={handleLangSearchAPI_Key_Change} />
  
       <div className="mt-4">
-        <FileUpload baseUrl="http://127.0.0.1:5000"></FileUpload>
+        <FileUpload onUpload={setLectureFile} />
         </div>
         <div className="mt-4">
         <button onClick={() => handleDownload()}
