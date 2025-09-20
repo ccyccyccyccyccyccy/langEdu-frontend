@@ -201,11 +201,13 @@ return (
     <div className="w-full space-y-4">
       <div>
         <h2 className="text-xl font-medium text-[rgba(0, 0, 0, 1)] space-y-2">Enter your OpenAI API key</h2>
+        <text className="text-sm text-[rgba(0, 0, 0, 0.7)] space-y-1">You can get your API key <a href="https://itso.hkust.edu.hk/services/it-infrastructure/azure-openai-api-service" target="_blank" className="text-blue-600 underline">here</a></text>
         <SecretInput onChange={handleOpenAI_API_Key_Change} />
       </div>
 
       <div>
         <h2 className="text-xl font-medium text-[rgba(0, 0, 0, 1)]">Enter your LangSearch API key</h2>
+        <text className="text-sm text-[rgba(0, 0, 0, 0.7)] space-y-1">You can get your API key <a href="https://docs.langsearch.com/use-cases/using-langsearch-in-langchain" target="_blank" className="text-blue-600 underline">here</a></text>
         <SecretInput onChange={handleLangSearchAPI_Key_Change} />
       </div>
 
