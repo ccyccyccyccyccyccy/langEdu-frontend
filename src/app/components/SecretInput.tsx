@@ -11,6 +11,7 @@ export const SecretInput = ({ onChange }: { onChange?: (value: string) => void }
         type={showSecret ? "text" : "password"}
         placeholder="Enter your API key"
         className="flex-grow outline-none"
+        onChange={(e) => onChange?.(e.target.value)}
       />
       <button
         type="button"

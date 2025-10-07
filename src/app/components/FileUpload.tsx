@@ -2,12 +2,13 @@
 import { useState } from "react";
 
 export default function FileUpload({ onUpload }: { onUpload: (file: File) => void }) {
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  // const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [fileName, setFileName] = useState("");
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setSelectedFile(file);
+      //setSelectedFile(file);
+      onUpload(file);
       setFileName(file.name);
     }
   };

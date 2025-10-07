@@ -112,7 +112,7 @@ import {SecretInput} from "./components/SecretInput";
 import { RadioGroupComponent } from "./components/RadioGroup";
 
 function App() {
-  const [text, setText] = useState("");
+  //const [text, setText] = useState("");
   const [data, setData] = useState("");
   const [openAI_API_Key, setOpenAI_API_Key] = useState("");
   const [langSearchAPI_Key, setLangSearchAPI_Key] = useState("");
