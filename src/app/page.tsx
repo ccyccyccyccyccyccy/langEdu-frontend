@@ -109,7 +109,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import FileUpload from "./components/FileUpload";
 import {SecretInput} from "./components/SecretInput";
-import { RadioGroupComponent } from "./components/RadioGroup";
+import { RadioGroupFiles } from "./components/RadioGroupFiles";
+import { RadioGroupQType } from "./components/RadioGroupQType";
 
 function App() {
   //const [text, setText] = useState("");
@@ -120,6 +121,7 @@ function App() {
   const [radioValue, setRadioValue] = useState<string>("oneDocument");
   const [ppFile1, setPPFile1] = useState<File | null>(null);
   const [ppFile2, setPPFile2] = useState<File | null>(null);
+  const [qType, setQType] = useState<string>("MCQ");
 
 const handleOpenAI_API_Key_Change = (value: string) => {
     setOpenAI_API_Key(value);
@@ -129,6 +131,10 @@ const handleOpenAI_API_Key_Change = (value: string) => {
   };
 const handleRadioChange = (value: string) => {
     setRadioValue(value);
+  }
+
+const handleQtypeChange = (value: string) => {
+    setQType(value);
   }
   
   const baseUrl="http://127.0.0.1:5000"
@@ -168,7 +174,8 @@ const handleRadioChange = (value: string) => {
         "numDocuments": radioValue === "oneDocument" ? 1 : 2,
         "lectureFileName": lectureFile ? lectureFile.name : null,
         "ppFile1Name": ppFile1 ? ppFile1.name : null,
-        "ppFile2Name": ppFile2 ? ppFile2.name : null
+        "ppFile2Name": ppFile2 ? ppFile2.name : null, 
+        "qType": qType
       })
     })
     if (!response.ok) {
@@ -219,7 +226,7 @@ return (
       <div className="space-y-2">
         <h2 className="text-xl font-medium text-[rgba(0, 0, 0, 1)]">Upload your pastpaper file(s)</h2>
          <div className="space-y-1">
-         <RadioGroupComponent onChange={handleRadioChange} />
+         <RadioGroupFiles onChange={handleRadioChange} />
         
         {radioValue === "oneDocument" ? (
           <FileUpload onUpload={setPPFile1} />
@@ -229,6 +236,12 @@ return (
             <FileUpload onUpload={setPPFile2} />
           </>
         )}
+        </div>
+      </div>
+      <div className="space-y-2">
+        <h2 className="text-xl font-medium text-[rgba(0, 0, 0, 1)]">Select question type</h2>
+         <div className="space-y-1">
+         <RadioGroupQType onChange={handleQtypeChange} />
         </div>
       </div>
 

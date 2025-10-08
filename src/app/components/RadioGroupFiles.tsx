@@ -6,7 +6,7 @@ import {
 
 type onChange = (value: string) => void
 
-export function RadioGroupComponent({onChange}: {onChange?: onChange}) {
+export function RadioGroupFiles({onChange}: {onChange?: onChange}) {
 
     const handleValueChange = (value: string) => {
       if (onChange) {
