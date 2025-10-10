@@ -1,106 +1,3 @@
-// import Image from "next/image";
-
-// export default function Home() {
-//   return (
-//     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-//       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-//         <Image
-//           className="dark:invert"
-//           src="/next.svg"
-//           alt="Next.js logo"
-//           width={180}
-//           height={38}
-//           priority
-//         />
-//         <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-//           <li className="mb-2 tracking-[-.01em]">
-//             Get started by editing{" "}
-//             <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-//               src/app/page.tsx
-//             </code>
-//             .
-//           </li>
-//           <li className="tracking-[-.01em]">
-//             Save and see your changes instantly.
-//           </li>
-//         </ol>
-
-//         <div className="flex gap-4 items-center flex-col sm:flex-row">
-//           <a
-//             className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-//             href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-//             target="_blank"
-//             rel="noopener noreferrer"
-//           >
-//             <Image
-//               className="dark:invert"
-//               src="/vercel.svg"
-//               alt="Vercel logomark"
-//               width={20}
-//               height={20}
-//             />
-//             Deploy now
-//           </a>
-//           <a
-//             className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-//             href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-//             target="_blank"
-//             rel="noopener noreferrer"
-//           >
-//             Read our docs
-//           </a>
-//         </div>
-//       </main>
-//       <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-//         <a
-//           className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-//           href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-//           target="_blank"
-//           rel="noopener noreferrer"
-//         >
-//           <Image
-//             aria-hidden
-//             src="/file.svg"
-//             alt="File icon"
-//             width={16}
-//             height={16}
-//           />
-//           Learn
-//         </a>
-//         <a
-//           className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-//           href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-//           target="_blank"
-//           rel="noopener noreferrer"
-//         >
-//           <Image
-//             aria-hidden
-//             src="/window.svg"
-//             alt="Window icon"
-//             width={16}
-//             height={16}
-//           />
-//           Examples
-//         </a>
-//         <a
-//           className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-//           href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-//           target="_blank"
-//           rel="noopener noreferrer"
-//         >
-//           <Image
-//             aria-hidden
-//             src="/globe.svg"
-//             alt="Globe icon"
-//             width={16}
-//             height={16}
-//           />
-//           Go to nextjs.org →
-//         </a>
-//       </footer>
-//     </div>
-//   );
-// }
 
 //http://localhost:3000/
 
@@ -139,11 +36,11 @@ const handleQtypeChange = (value: string) => {
   
   const baseUrl="http://127.0.0.1:5000"
 
-  useEffect(() => {
-    axios.get("http://127.0.0.1:5000/api/data")
-      .then(response => setData(response.data.message))
-      .catch(error => console.error("Error fetching data:", error));
-  }, []);
+  // useEffect(() => {
+  //   axios.get("http://127.0.0.1:5000/api/data")
+  //     .then(response => setData(response.data.message))
+  //     .catch(error => console.error("Error fetching data:", error));
+  // }, []);
 
   async function handleGetResults() {
     if (!openAI_API_Key || !langSearchAPI_Key) {
@@ -163,36 +60,66 @@ const handleQtypeChange = (value: string) => {
       return;
     }
     console.log("Get results button clicked");
-    const response = await fetch(baseUrl + "/get_results", {
-      method: "POST",
+    const formData = new FormData();
+    formData.append("lectureFile", lectureFile);
+    if (ppFile1) formData.append("ppFile1", ppFile1);
+    if (ppFile2) formData.append("ppFile2", ppFile2);
+    formData.append("numDocuments", radioValue === "oneDocument" ? "1" : "2");
+    formData.append("qType", qType);
+    //formData.append("openAI_API_Key", openAI_API_Key);
+    //formData.append("langSearchAPI_Key", langSearchAPI_Key);
+    axios.post(baseUrl + "/results", formData, {
       headers: {
-        "Content-Type": "application/json",
+        'Authorization': `openAI_API_Key ${openAI_API_Key}, langSearchAPI_Key ${langSearchAPI_Key}`,
       },
-      body: JSON.stringify({
-        "openAI_API_Key": openAI_API_Key,
-        "langSearchAPI_Key": langSearchAPI_Key,
-        "numDocuments": radioValue === "oneDocument" ? 1 : 2,
-        "lectureFileName": lectureFile ? lectureFile.name : null,
-        "ppFile1Name": ppFile1 ? ppFile1.name : null,
-        "ppFile2Name": ppFile2 ? ppFile2.name : null, 
-        "qType": qType
-      })
+      responseType: 'blob' // Important
     })
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
-    const blob= await response.blob();
-    const url = URL.createObjectURL(blob);
+    .then((response) => {
+      // Handle the response data (which is a Blob)
+      const blob = new Blob([response.data], { type: 'text/html' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'results.html'; // Set the desired file name
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    })
+    .catch((error) => {
+      console.error('Error fetching the results:', error);
+      alert("An error occurred while fetching the results. Please try again.");
+    });
+    // const response = await fetch(baseUrl + "/get_results", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify({
+    //     "openAI_API_Key": openAI_API_Key,
+    //     "langSearchAPI_Key": langSearchAPI_Key,
+    //     "numDocuments": radioValue === "oneDocument" ? 1 : 2,
+    //     "lectureFileName": lectureFile ? lectureFile.name : null,
+    //     "ppFile1Name": ppFile1 ? ppFile1.name : null,
+    //     "ppFile2Name": ppFile2 ? ppFile2.name : null, 
+    //     "qType": qType
+    //   })
+    // })
+    // if (!response.ok) {
+    //   throw new Error("Network response was not ok");
+    // }
+    // const blob= await response.blob();
+    // const url = URL.createObjectURL(blob);
     
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "hello.html"; // Specify the filename
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    // const a = document.createElement("a");
+    // a.href = url;
+    // a.download = "hello.html"; // Specify the filename
+    // document.body.appendChild(a);
+    // a.click();
+    // document.body.removeChild(a);
     
-    // Clean up the URL object
-    URL.revokeObjectURL(url);
+    // // Clean up the URL object
+    // URL.revokeObjectURL(url);
 
   }
 
