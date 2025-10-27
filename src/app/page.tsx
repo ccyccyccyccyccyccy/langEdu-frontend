@@ -18,7 +18,7 @@ function App() {
   const [radioValue, setRadioValue] = useState<string>("oneDocument");
   const [ppFile1, setPPFile1] = useState<File | null>(null);
   const [ppFile2, setPPFile2] = useState<File | null>(null);
-  const [qType, setQType] = useState<string>("MCQ");
+  const [qType, setQType] = useState<string>("Multiple choice question");
 
 const handleOpenAI_API_Key_Change = (value: string) => {
     setOpenAI_API_Key(value);
@@ -43,6 +43,7 @@ const handleQtypeChange = (value: string) => {
   // }, []);
 
   async function handleGetResults() {
+    let numDocuments = radioValue === "oneDocument" ? 1 : 2;
     if (!openAI_API_Key || !langSearchAPI_Key) {
       alert("Please enter both API keys.");
       return;
@@ -52,8 +53,7 @@ const handleQtypeChange = (value: string) => {
       return;
     }
     if (radioValue === "oneDocument" && !ppFile1) {
-      alert("Please upload the pastpaper file.");
-      return;
+      numDocuments = 0;
     }
     if (radioValue === "twoDocument" && (!ppFile1 || !ppFile2)) {
       alert("Please upload both pastpaper files.");
@@ -64,19 +64,19 @@ const handleQtypeChange = (value: string) => {
     formData.append("lectureFile", lectureFile);
     if (ppFile1) formData.append("ppFile1", ppFile1);
     if (ppFile2) formData.append("ppFile2", ppFile2);
-    formData.append("numDocuments", radioValue === "oneDocument" ? "1" : "2");
+    formData.append("numDocuments", numDocuments.toString());
     formData.append("qType", qType);
     //formData.append("openAI_API_Key", openAI_API_Key);
     //formData.append("langSearchAPI_Key", langSearchAPI_Key);
     axios.post(baseUrl + "/results", formData, {
       headers: {
-        'Authorization': `openAI_API_Key ${openAI_API_Key}, langSearchAPI_Key ${langSearchAPI_Key}`,
-      },
-      responseType: 'blob' // Important
+        'Openai-Api-Key': openAI_API_Key,
+        'Langsearch-Api-Key': langSearchAPI_Key
+      }
     })
     .then((response) => {
-      // Handle the response data (which is a Blob)
-      const blob = new Blob([response.data], { type: 'text/html' });
+      console.log("Response received:", response.data);
+      const blob = new Blob([String(response.data.message)], { type: 'text/html' });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -87,8 +87,9 @@ const handleQtypeChange = (value: string) => {
       window.URL.revokeObjectURL(url);
     })
     .catch((error) => {
-      console.error('Error fetching the results:', error);
-      alert("An error occurred while fetching the results. Please try again.");
+      console.log('Full error response:', error.response);
+      console.log('Raw data:', error.response?.data);
+      alert(error.response?.data?.error || 'An error occurred while fetching the results.');
     });
     // const response = await fetch(baseUrl + "/get_results", {
     //   method: "POST",
