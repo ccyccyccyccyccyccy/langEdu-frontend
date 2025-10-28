@@ -7,7 +7,10 @@ export default function FileUpload({ onUpload }: { onUpload: (file: File) => voi
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      //setSelectedFile(file);
+      if (file.name.split('.').pop()?.toLowerCase() !== 'pdf') {
+        alert("Please upload a PDF file.");
+        return;
+      }
       onUpload(file);
       setFileName(file.name);
     }
@@ -15,17 +18,20 @@ export default function FileUpload({ onUpload }: { onUpload: (file: File) => voi
 
   
   return (
-    <div>
-      <input type="file" onChange={handleFileChange} 
-      className="block w-full text-sm text-white
-               file:mr-4 file:py-2 file:px-4
+<div>
+  <input
+    type="file"
+    onChange={handleFileChange}
+    className="text-sm md:w-[130px] text-white
+               file:py-2 file:px-4
                file:rounded-md file:border-0
                file:text-sm file:font-semibold
                file:bg-[rgb(0,51,102)] file:text-white
                hover:file:bg-[rgb(0,41,82)]
                transition"
-/>
-      {fileName && <p className="mt-2 text-sm text-gray-500">{fileName}</p>}
-    </div>
+   />
+  {fileName && <p className="mt-2 text-sm text-gray-500">{fileName}</p>}
+</div>
+
   );
 }

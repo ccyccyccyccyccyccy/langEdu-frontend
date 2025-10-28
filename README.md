@@ -38,4 +38,4 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 ## Enhancements:
 - use a file dropbox for uploading files
 - allow reusing same pp reference
-- file type checking 
+- UI issue when uploading files

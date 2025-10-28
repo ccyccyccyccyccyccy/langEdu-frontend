@@ -6,11 +6,12 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import FileUpload from "./components/FileUpload";
 import {SecretInput} from "./components/SecretInput";
+import { TextInput } from "./components/TextInput";
 import { RadioGroupFiles } from "./components/RadioGroupFiles";
-import { RadioGroupQType } from "./components/RadioGroupQType";
+import { QType } from "./components/RadioGroupQType";
 
 function App() {
-  //const [text, setText] = useState("");
+  const [programmingLang, setProgrammingLang] = useState("");
   const [data, setData] = useState("");
   const [openAI_API_Key, setOpenAI_API_Key] = useState("");
   const [langSearchAPI_Key, setLangSearchAPI_Key] = useState("");
@@ -59,6 +60,10 @@ const handleQtypeChange = (value: string) => {
       alert("Please upload both pastpaper files.");
       return;
     }
+    if (qType === "Coding question" && !programmingLang) {
+      alert("Please enter the target programming language.");
+      return;
+    }
     console.log("Get results button clicked");
     const formData = new FormData();
     formData.append("lectureFile", lectureFile);
@@ -66,8 +71,7 @@ const handleQtypeChange = (value: string) => {
     if (ppFile2) formData.append("ppFile2", ppFile2);
     formData.append("numDocuments", numDocuments.toString());
     formData.append("qType", qType);
-    //formData.append("openAI_API_Key", openAI_API_Key);
-    //formData.append("langSearchAPI_Key", langSearchAPI_Key);
+    formData.append("programmingLanguage", programmingLang);
     axios.post(baseUrl + "/results", formData, {
       headers: {
         'Openai-Api-Key': openAI_API_Key,
@@ -160,17 +164,32 @@ return (
           <FileUpload onUpload={setPPFile1} />
         ) : (
           <>
+        <div className="flex items-center gap-1">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium">Question:</span>
             <FileUpload onUpload={setPPFile1} />
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium">Answer:</span>
             <FileUpload onUpload={setPPFile2} />
+          </div>
+        </div>
           </>
         )}
         </div>
       </div>
       <div className="space-y-2">
         <h2 className="text-xl font-medium text-[rgba(0, 0, 0, 1)]">Select question type</h2>
-         <div className="space-y-1">
-         <RadioGroupQType onChange={handleQtypeChange} />
+      <div className="flex flex-col md:flex-row items-start gap-4 w-full">
+        <div className="w-full md:w-auto">
+          <QType onChange={handleQtypeChange} />
         </div>
+        {qType === "Coding question" && (
+          <div className="w-full md:w-[450px]">
+            <TextInput onChange={(value) => setProgrammingLang(value)} />
+          </div>
+        )}
+      </div>
       </div>
 
       <div className="pt-4">

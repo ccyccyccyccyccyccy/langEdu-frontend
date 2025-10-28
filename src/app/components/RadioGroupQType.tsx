@@ -1,13 +1,20 @@
 import { Label } from "@/components/ui/label"
+import { Button } from "@/components/ui/button"
+import * as React from "react"
 import {
-  RadioGroup,
-  RadioGroupItem,
-} from "@/components/ui/radio-group"
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 type onChange = (value: string) => void
 
-export function RadioGroupQType({onChange}: {onChange?: onChange}) {
-
+export function QType({onChange}: {onChange?: onChange}) {
+    const [qType, setQType] = React.useState("Multiple choice question");
     const handleValueChange = (value: string) => {
       if (onChange) {
         onChange(value);
@@ -15,15 +22,20 @@ export function RadioGroupQType({onChange}: {onChange?: onChange}) {
     };
 
   return ( //TODO: this should be a dropdown
-    <RadioGroup defaultValue="Multiple choice question" onValueChange={handleValueChange} className="grid grid-cols-1 gap-2">
-      <div className="flex items-center gap-3">
-        <RadioGroupItem value="Multiple choice question" id="q1" />
-        <Label htmlFor="q1">Multiple Choice Questions</Label>
-      </div>
-      <div className="flex items-center gap-3">
-        <RadioGroupItem value="Long question" id="q2" />
-        <Label htmlFor="q2">Long Questions</Label>
-      </div>
-    </RadioGroup>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline">{qType}</Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-56">
+        <DropdownMenuLabel>Question Type</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuRadioGroup value={qType} onValueChange={(value) => { setQType(value); handleValueChange(value); }}>
+          <DropdownMenuRadioItem value="Multiple choice question">Multiple choice question</DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="Long question">Long question</DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="Coding question">Coding question</DropdownMenuRadioItem>
+        </DropdownMenuRadioGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }
+
