@@ -5,6 +5,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import FileUpload from "./components/FileUpload";
+import { Spinner } from '@/components/ui/shadcn-io/spinner';
 import {SecretInput} from "./components/SecretInput";
 import { TextInput } from "./components/TextInput";
 import { RadioGroupFiles } from "./components/RadioGroupFiles";
@@ -20,6 +21,7 @@ function App() {
   const [ppFile1, setPPFile1] = useState<File | null>(null);
   const [ppFile2, setPPFile2] = useState<File | null>(null);
   const [qType, setQType] = useState<string>("Multiple choice question");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
 const handleOpenAI_API_Key_Change = (value: string) => {
     setOpenAI_API_Key(value);
@@ -44,6 +46,11 @@ const handleQtypeChange = (value: string) => {
   // }, []);
 
   async function handleGetResults() {
+    if (isLoading) {
+      return;
+      
+    }
+    setIsLoading(true);
     let numDocuments = radioValue === "oneDocument" ? 1 : 2;
     if (!openAI_API_Key || !langSearchAPI_Key) {
       alert("Please enter both API keys.");
@@ -95,6 +102,7 @@ const handleQtypeChange = (value: string) => {
       console.log('Raw data:', error.response?.data);
       alert(error.response?.data?.error || 'An error occurred while fetching the results.');
     });
+    setIsLoading(false);
     // const response = await fetch(baseUrl + "/get_results", {
     //   method: "POST",
     //   headers: {
@@ -193,13 +201,14 @@ return (
       </div>
 
       <div className="pt-4">
-        <button
-          onClick={() => handleGetResults()}
-          className="w-full px-4 py-2 bg-[rgb(0,51,102)] text-white rounded-md hover:bg-[rgb(0,41,82)] transition-colors"
-        >
-          Get results
-        </button>
-      </div>
+      <button
+        onClick={() => handleGetResults()}
+        className="w-full px-4 py-2 bg-[rgb(0,51,102)] text-white rounded-md hover:bg-[rgb(0,41,82)] transition-colors flex items-center justify-center gap-2"
+      >
+        Get results
+        {isLoading && <Spinner variant="circle-filled" />}
+      </button>
+    </div>
     </div>
   </div>
 );

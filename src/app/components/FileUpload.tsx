@@ -7,6 +7,14 @@ export default function FileUpload({ onUpload }: { onUpload: (file: File) => voi
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (file.name.split('.').length < 2) {
+        alert("Please upload a valid file.");
+        return;
+      }
+      if (file.name.split('.').length > 2) {
+        alert("It is not allowed to have multiple dots in the file name. Please rename your file and try again.");
+        return;
+      } 
       if (file.name.split('.').pop()?.toLowerCase() !== 'pdf') {
         alert("Please upload a PDF file.");
         return;
