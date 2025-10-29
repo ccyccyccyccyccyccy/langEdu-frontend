@@ -36,15 +36,17 @@ const handleRadioChange = (value: string) => {
 const handleQtypeChange = (value: string) => {
     setQType(value);
   }
-  
-  const baseUrl="http://127.0.0.1:5000"
+
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || ""
+  if (!baseUrl) {
+    console.error("BASE_URL is not defined");
+  }
 
   // useEffect(() => {
   //   axios.get("http://127.0.0.1:5000/api/data")
   //     .then(response => setData(response.data.message))
   //     .catch(error => console.error("Error fetching data:", error));
   // }, []);
-
   async function handleGetResults() {
     if (isLoading) {
       return;
