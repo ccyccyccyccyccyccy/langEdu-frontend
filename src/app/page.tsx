@@ -16,12 +16,14 @@ function App() {
   const [data, setData] = useState("");
   const [openAI_API_Key, setOpenAI_API_Key] = useState("");
   const [langSearchAPI_Key, setLangSearchAPI_Key] = useState("");
+  const [hfAPI_Key, setHfAPI_Key] = useState("");
   const [lectureFile, setLectureFile] = useState<File | null>(null);
   const [radioValue, setRadioValue] = useState<string>("oneDocument");
   const [ppFile1, setPPFile1] = useState<File | null>(null);
   const [ppFile2, setPPFile2] = useState<File | null>(null);
   const [qType, setQType] = useState<string>("Multiple choice question");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [numDocuments, setNumDocuments] = useState<number>(0);
 
 const handleOpenAI_API_Key_Change = (value: string) => {
     setOpenAI_API_Key(value);
@@ -29,7 +31,10 @@ const handleOpenAI_API_Key_Change = (value: string) => {
   const handleLangSearchAPI_Key_Change = (value: string) => {
     setLangSearchAPI_Key(value);
   };
-const handleRadioChange = (value: string) => {
+  const handleHfAPI_Key_Change = (value: string) => {
+    setHfAPI_Key(value);
+  };
+  const handleRadioChange = (value: string) => {
     setRadioValue(value);
   }
 
@@ -52,8 +57,8 @@ const handleQtypeChange = (value: string) => {
       return;
       
     }
-    setIsLoading(true);
-    let numDocuments = radioValue === "oneDocument" ? 1 : 2;
+    
+    
     if (!openAI_API_Key || !langSearchAPI_Key) {
       alert("Please enter both API keys.");
       return;
@@ -63,17 +68,28 @@ const handleQtypeChange = (value: string) => {
       return;
     }
     if (radioValue === "oneDocument" && !ppFile1) {
-      numDocuments = 0;
+      setNumDocuments(0);
+
     }
     if (radioValue === "twoDocument" && (!ppFile1 || !ppFile2)) {
       alert("Please upload both pastpaper files.");
+      return;
+    }
+    if (radioValue === "oneDocument" && ppFile1) {
+      setNumDocuments(1);
+    }
+    if (radioValue === "twoDocument" && ppFile1 && ppFile2) {
+      setNumDocuments(2);
+    }
+    if (numDocuments > 0 && (!hfAPI_Key)) {
+      alert("Please enter HuggingFace API key.");
       return;
     }
     if (qType === "Coding question" && !programmingLang) {
       alert("Please enter the target programming language.");
       return;
     }
-    console.log("Get results button clicked");
+    setIsLoading(true);
     const formData = new FormData();
     formData.append("lectureFile", lectureFile);
     if (ppFile1) formData.append("ppFile1", ppFile1);
@@ -81,30 +97,33 @@ const handleQtypeChange = (value: string) => {
     formData.append("numDocuments", numDocuments.toString());
     formData.append("qType", qType);
     formData.append("programmingLanguage", programmingLang);
-    axios.post(baseUrl + "/results", formData, {
-      headers: {
-        'Openai-Api-Key': openAI_API_Key,
-        'Langsearch-Api-Key': langSearchAPI_Key
-      }
-    })
-    .then((response) => {
-      console.log("Response received:", response.data);
-      const blob = new Blob([String(response.data.message)], { type: 'text/html' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'results.html'; // Set the desired file name
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      window.URL.revokeObjectURL(url);
-    })
-    .catch((error) => {
-      console.log('Full error response:', error.response);
-      console.log('Raw data:', error.response?.data);
-      alert(error.response?.data?.error || 'An error occurred while fetching the results.');
-    });
+  axios.post(baseUrl + "/results", formData, {
+    headers: {
+      'Openai-Api-Key': openAI_API_Key,
+      'Langsearch-Api-Key': langSearchAPI_Key, 
+      'Hf-Api-Key': hfAPI_Key
+    }
+  })
+  .then((response) => {
+    console.log("Response received:", response.data);
+    const blob = new Blob([String(response.data.message)], { type: 'text/html' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'results.html'; // Set the desired file name
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+  })
+  .catch((error) => {
+    console.log('Full error response:', error.response);
+    console.log('Raw data:', error.response?.data);
+    alert(error.response?.data?.error || 'An error occurred while fetching the results.');
+  })
+  .finally(() => {
     setIsLoading(false);
+  });
     // const response = await fetch(baseUrl + "/get_results", {
     //   method: "POST",
     //   headers: {
@@ -158,6 +177,12 @@ return (
         <h2 className="text-xl font-medium text-[rgba(0, 0, 0, 1)]">Enter your LangSearch API key</h2>
         <text className="text-sm text-[rgba(0, 0, 0, 0.7)] space-y-1">You can get your API key <a href="https://docs.langsearch.com/use-cases/using-langsearch-in-langchain" target="_blank" className="text-blue-600 underline">here</a></text>
         <SecretInput onChange={handleLangSearchAPI_Key_Change} />
+      </div>
+
+      <div>
+        <h2 className="text-xl font-medium text-[rgba(0, 0, 0, 1)]">Enter your HuggingFace token</h2>
+        <text className="text-sm text-[rgba(0, 0, 0, 0.7)] space-y-1">You can get your token <a href="https://www.learnhuggingface.com/extras/setup" target="_blank" className="text-blue-600 underline">here</a></text>
+        <SecretInput onChange={handleHfAPI_Key_Change} />
       </div>
 
       <div className="space-y-2">
