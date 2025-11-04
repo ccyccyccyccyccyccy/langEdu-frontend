@@ -2,7 +2,7 @@
 //http://localhost:3000/
 
 'use client'
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import FileUpload from "./components/FileUpload";
 import { Spinner } from '@/components/ui/shadcn-io/spinner';
@@ -13,7 +13,7 @@ import { QType } from "./components/RadioGroupQType";
 
 function App() {
   const [programmingLang, setProgrammingLang] = useState("");
-  const [data, setData] = useState("");
+  // const [data, setData] = useState("");
   const [openAI_API_Key, setOpenAI_API_Key] = useState("");
   const [langSearchAPI_Key, setLangSearchAPI_Key] = useState("");
   const [hfAPI_Key, setHfAPI_Key] = useState("");
@@ -163,7 +163,7 @@ return (
       <h1 className="text-3xl font-semibold tracking-tight text-[rgb(0,51,102)]">
         Assessment question generator
       </h1>
-      <p className="text-muted-foreground">{data}</p>
+      <p className="text-muted-foreground">{""}</p>
     </div>
 
     <div className="w-full space-y-4">
